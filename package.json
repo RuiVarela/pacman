@@ -1,7 +1,7 @@
 {
-  "name": "phaser3-project-template",
-  "version": "1.1.0",
-  "description": "A Phaser 3 Project Template",
+  "name": "pacman",
+  "version": "0.0.1",
+  "description": "pacaman classic game",
   "main": "src/index.js",
   "scripts": {
     "build": "webpack --config webpack/prod.js ",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/photonstorm/phaser3-project-template.git"
+    "url": "git+https://github.com/RuiVarela/pacman.git"
   },
-  "author": "Richard Davey <rdavey@gmail.com> (http://www.photonstorm.com)",
+  "author": "Rui Varela <ryven.kicks.ass@gmail.com>",
   "license": "MIT",
   "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
   "bugs": {
-    "url": "https://github.com/photonstorm/phaser3-project-template/issues"
+    "url": "https://github.com/RuiVarela/pacman/issues"
   },
-  "homepage": "https://github.com/photonstorm/phaser3-project-template#readme",
+  "homepage": "https://github.com/RuiVarela/pacman#readme",
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
