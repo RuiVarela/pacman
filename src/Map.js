@@ -1,15 +1,12 @@
 import App from "./Application";
+import Wall from "./entities/Wall";
+import Space from "./entities/Space";
 import Phaser from "phaser";
 
 import BaseAtlasImage from "./assets/base_atlas.png";
 import BaseAtlasJson from "./assets/base_atlas.json";
 
 import Map00Json from "./assets/map00.json";
-
-var EntityKind = {
-    None: 0,
-    Wall: 1
-};
 
 class Map extends Phaser.Scene {
 
@@ -67,55 +64,16 @@ class Map extends Phaser.Scene {
 
 
     createCell(x, y, code) {
-        let cell = {
-            pos: { 
-                x : this.squareSize * x + this.squareSize * 0.5, 
-                y : this.squareSize * y + this.squareSize * 0.5 
-            },
-            kind: EntityKind.None,
-            sprite: null
-        };
+        let cell = null;
 
-
-        //
-        // outer wall
-        //
-        if (code === 'q') {
-            cell.kind = EntityKind.Wall;
-            cell.sprite = this.add.image(cell.pos.x, cell.pos.y, 'BaseAtlas', "map/outer_top_left");
-        } else if (code === 'w') {
-            cell.kind = EntityKind.Wall;
-            cell.sprite = this.add.image(cell.pos.x, cell.pos.y, 'BaseAtlas', "map/outer_top");
-        } else if (code === 'e') {
-            cell.kind = EntityKind.Wall;
-            cell.sprite = this.add.image(cell.pos.x, cell.pos.y, 'BaseAtlas', "map/outer_top_right");
-        } else if (code === 'a') {
-            cell.kind = EntityKind.Wall;
-            cell.sprite = this.add.image(cell.pos.x, cell.pos.y, 'BaseAtlas', "map/outer_left");
-        } else if (code === 'd') {
-            cell.kind = EntityKind.Wall;
-            cell.sprite = this.add.image(cell.pos.x, cell.pos.y, 'BaseAtlas', "map/outer_right");
-        } else if (code === 'z') {
-            cell.kind = EntityKind.Wall;
-            cell.sprite = this.add.image(cell.pos.x, cell.pos.y, 'BaseAtlas', "map/outer_bottom_left");
-        } else if (code === 'c') {
-            cell.kind = EntityKind.Wall;
-            cell.sprite = this.add.image(cell.pos.x, cell.pos.y, 'BaseAtlas', "map/outer_bottom_right");
-        } else if (code === 'x') {
-            cell.kind = EntityKind.Wall;
-            cell.sprite = this.add.image(cell.pos.x, cell.pos.y, 'BaseAtlas', "map/outer_bottom");
+        if (Wall.nameFromKey(code) != null) {
+            cell = new Wall(this, x, y, this.squareSize, code);
+        } else {
+            cell = new Space(this, x, y, this.squareSize);
         }
 
-
-
-
-        if (cell.sprite) {
-            cell.sprite.displayWidth = this.squareSize;
-            cell.sprite.displayHeight = this.squareSize;
-        }
 
         console.log(code);
-        //this.data.push([]); 
         return cell;
     }
 }
