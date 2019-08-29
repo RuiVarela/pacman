@@ -1,7 +1,6 @@
-import App from "../Application";
-import Phaser from "phaser";
+import Entity from "./Entity";
 
-class Wall extends Phaser.GameObjects.Sprite {
+class Wall extends Entity {
 
     static nameFromKey(code) {
         if (code === 'q') {
@@ -44,23 +43,47 @@ class Wall extends Phaser.GameObjects.Sprite {
             return "map/outer_junction_top_left";
         } else if (code === 'i') {
             return "map/outer_junction_top_right";
+        } else if (code === 'j') {
+            return "map/outer_junction_left_top";
+        } else if (code === 'k') {
+            return "map/outer_junction_left_bottom";
+        } else if (code === 'm') {
+            return "map/outer_junction_right_top";
+        } else if (code === ',') {
+            return "map/outer_junction_right_bottom";
+        } 
+
+        else if (code === 'o') {
+            return "map/inner_junction_top_left";
+        } else if (code === 'p') {
+            return "map/inner_junction_top_right";
+        } else if (code === 'l') {
+            return "map/inner_junction_bottom_left";
+        } else if (code === 'ç') {
+            return "map/inner_junction_bottom_right";
+        } 
+
+        else if (code === 'º') {
+            return "map/square_top_left";
+        } else if (code === 'ª') {
+            return "map/square_top_right";
+        } else if (code === '´') {
+            return "map/square_bottom_left";
+        } else if (code === '`') {
+            return "map/square_bottom_right";
+        } else if (code === '~') {
+            return "map/square_open_left";
+        } else if (code === '^') {
+            return "map/square_open_right";
+        } else if (code === '|') {
+            return "map/square_opening";
         }
 
         return null;
     }
 
     constructor(scene, x, y, size, key) {
-        super(scene,
-            size * x + size * 0.5, size * y + size * 0.5,
-            'BaseAtlas', Wall.nameFromKey(key));
-
-        this.cell_x = x;
-        this.cell_y = y;
-
-        this.displayWidth = size;
-        this.displayHeight = size;
-
-        scene.add.existing(this);
+        super(scene, x, y, size, Wall.nameFromKey(key));
     }
 }
 

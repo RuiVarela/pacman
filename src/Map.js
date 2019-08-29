@@ -1,6 +1,7 @@
 import App from "./Application";
 import Wall from "./entities/Wall";
 import Space from "./entities/Space";
+import Dot from "./entities/Dot";
 import Phaser from "phaser";
 
 import BaseAtlasImage from "./assets/base_atlas.png";
@@ -68,6 +69,8 @@ class Map extends Phaser.Scene {
 
         if (Wall.nameFromKey(code) != null) {
             cell = new Wall(this, x, y, this.squareSize, code);
+        } else if (Dot.nameFromKey(code) != null) {
+            cell = new Dot(this, x, y, this.squareSize, code);
         } else {
             cell = new Space(this, x, y, this.squareSize);
         }
