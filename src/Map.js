@@ -1,13 +1,17 @@
 import App from "./Application";
+
 import Wall from "./entities/Wall";
 import Space from "./entities/Space";
 import Dot from "./entities/Dot";
 import Phaser from "phaser";
+import Energizer from "./entities/Energizer";
 
 import BaseAtlasImage from "./assets/base_atlas.png";
 import BaseAtlasJson from "./assets/base_atlas.json";
 
-import Map00Json from "./assets/map00.json";
+import MapJson from "./assets/map00.json";
+import Pacman from "./entities/Pacman";
+
 
 class Map extends Phaser.Scene {
 
@@ -35,7 +39,12 @@ class Map extends Phaser.Scene {
             }
         }
 
-        let data = Map00Json.data;
+        //   var x = Phaser.Math.Between(0, 800);
+        //  var y = Phaser.Math.Between(0, 600);
+        //this.add.image(x, y, 'megaset', frames[i]);
+
+        let json = MapJson;
+        let data = json.data;
         this.rows = data.length;
         this.cols = data[0].length
 
@@ -46,23 +55,9 @@ class Map extends Phaser.Scene {
                 this.level[y].push(this.createCell(x, y, code));           
             }
         }
-        console.log(this.data)
 
-        //   var x = Phaser.Math.Between(0, 800);
-        //  var y = Phaser.Math.Between(0, 600);
-        //this.add.image(x, y, 'megaset', frames[i]);
-
-        const logo = this.add.image(40, 150, 'BaseAtlas', "pacman_big/pacman-0");
-        this.tweens.add({
-            targets: logo,
-            y: 45,
-            duration: 2000,
-            ease: "Power2",
-            yoyo: true,
-            loop: -1
-        });
+        this.pacman = new Pacman(this, this.squareSize, json.pacman_position)
     }
-
 
     createCell(x, y, code) {
         let cell = null;
@@ -71,12 +66,11 @@ class Map extends Phaser.Scene {
             cell = new Wall(this, x, y, this.squareSize, code);
         } else if (Dot.nameFromKey(code) != null) {
             cell = new Dot(this, x, y, this.squareSize, code);
+        } else if (Energizer.nameFromKey(code) != null) {
+            cell = new Energizer(this, x, y, this.squareSize, code);
         } else {
             cell = new Space(this, x, y, this.squareSize);
         }
-
-
-        console.log(code);
         return cell;
     }
 }

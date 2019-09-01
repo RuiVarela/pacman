@@ -6,7 +6,7 @@
         "qwwwwwwwwwwwwiuwwwwwwwwwwwwe",
         "a............fh............d",
         "a.rtty.rttty.fh.rttty.rtty.d",
-        "a.f  h.f   h.fh.f   h.f  h.d",
+        "a:f  h.f   h.fh.f   h.f  h:d",
         "a.vbbn.vbbbn.vn.vbbbn.vbbn.d",
         "a..........................d",
         "a.rtty.ry.rtttttty.ry.rtty.d",
@@ -26,7 +26,7 @@
         "a............fh............d",
         "a.rtty.rttty.fh.rttty.rtty.d",
         "a.vbph.vbbbn.vn.vbbbn.fobn.d",
-        "a...fh................fh...d",
+        "a:..fh................fh..:d",
         "jty.fh.ry.rtttttty.ry.fh.rtm",
         "kbn.vn.fh.vbbpobbn.fh.vn.vb,",
         "a......fh....fh....fh......d",
@@ -34,5 +34,8 @@
         "a.vbbbbbbbbn.vn.vbbbbbbbbn.d",
         "a..........................d",
         "zxxxxxxxxxxxxxxxxxxxxxxxxxxc"
-    ]
+    ],
+
+    "pacman_position_description" : "pacman starting position, it more than 1 pair is set, it will center pacman",
+    "pacman_position": [ 14,27, 15,27]
 }

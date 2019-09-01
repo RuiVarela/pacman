@@ -2,16 +2,55 @@ import Phaser from "phaser";
 
 class Entity extends Phaser.GameObjects.Sprite {
 
-    constructor(scene, x, y, size, image) {
-        super(scene,
-            size * x + size * 0.5, size * y + size * 0.5,
-            'BaseAtlas', image);
+    static computePositionFromArray(array) {
+        let position = {
+            x: 0,
+            y: 0
+        };
 
-        this.cell_x = x;
-        this.cell_y = y;
+        for (let index = 0; index != array.length; ++index) {
+            let value = array[index];
+            if (index % 2 == 0) {
+                position.x += value;
+            } else {
+                position.y += value;
+            }
+        }
 
-        this.displayWidth = size;
-        this.displayHeight = size;
+        if (array.length > 0) {
+            position.x /= (array.length / 2.0);
+            position.y /= (array.length / 2.0);
+        }
+
+        return position;
+    }
+
+    constructor(scene, x, y, size, image, positions_array) {
+        var position = {
+            x : size * x + size * 0.5,
+            y : size * y + size * 0.5
+        };
+
+        if (positions_array) {
+            position = Entity.computePositionFromArray(positions_array);
+            position.x = position.x * size - size * 0.5;
+            position.y = position.y * size - size * 0.5;
+        }
+
+        super(scene, position.x, position.y, 'BaseAtlas', image);
+
+        if (positions_array) {
+            
+            this.displayWidth = size * 2;
+            this.displayHeight = size * 2;
+        }
+        else {
+            this.cell_x = x;
+            this.cell_y = y;
+
+            this.displayWidth = size;
+            this.displayHeight = size;
+        }
 
         scene.add.existing(this);
     }
