@@ -1,7 +1,7 @@
 import Entity from "./Entity";
 
 class Dot extends Entity {
-
+    
     static nameFromKey(code) {
         if (code === '.') {
             return "map/dot";

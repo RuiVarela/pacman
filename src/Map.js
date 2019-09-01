@@ -11,6 +11,7 @@ import BaseAtlasJson from "./assets/base_atlas.json";
 
 import MapJson from "./assets/map00.json";
 import Pacman from "./entities/Pacman";
+import Character from "./entities/Character";
 
 
 class Map extends Phaser.Scene {
@@ -30,6 +31,8 @@ class Map extends Phaser.Scene {
 
     create() {
         console.log("Map create");
+
+        this.cursors = this.input.keyboard.createCursorKeys();
 
         if (false) {
             let atlas = this.textures.get('BaseAtlas');
@@ -73,6 +76,20 @@ class Map extends Phaser.Scene {
         }
         return cell;
     }
+
+    update(time, delta) {
+       //  console.log("update: " + time + " delta: " + delta)
+
+        if (this.cursors.left.isDown)
+            this.pacman.setNextMove(Character.Move.Left);
+        else if (this.cursors.right.isDown)
+            this.pacman.setNextMove(Character.Move.Right);
+        else if (this.cursors.up.isDown)
+            this.pacman.setNextMove(Character.Move.Up);
+        else if (this.cursors.down.isDown)
+            this.pacman.setNextMove(Character.Move.Down);
+    }
+    
 }
 
 export default Map;

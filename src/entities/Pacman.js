@@ -1,11 +1,15 @@
-import Entity from "./Entity";
+import Character from "./Character";
 
-class Pacman extends Entity {
-    constructor(scene, size, pacman_position) {
-        super(scene, null, null, size, "pacman/filled", pacman_position);
+class Pacman extends Character {
+  constructor(scene, size, position) {
+    super(scene, size, "pacman/right_1", position);
+  }
 
-      //  super(scene, pos.x, pos.y, size, "pacman/filled");
-    }
+  setNextMove(move) {
+    if (!super.setNextMove(move))
+      return;
+    console.log("PAC setNextMove " + this.move);
+  }
 }
 
 export default Pacman;

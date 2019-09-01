@@ -1,4 +1,3 @@
-import App from "../Application";
 
 class Space {
     constructor(scene, x, y, size) {
