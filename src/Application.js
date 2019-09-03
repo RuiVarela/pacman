@@ -13,7 +13,7 @@ class Application {
         this.width = this.horizontalTiles * this.squareSize;
         this.height = this.verticalTiles * this.squareSize;
 
-        console.log("Application constructor")
+        console.log("Application constructor");
     }
 
     run() {

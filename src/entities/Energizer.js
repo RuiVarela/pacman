@@ -3,7 +3,7 @@ import Entity from "./Entity";
 class Energizer extends Entity {
 
     static nameFromKey(code) {
-        if (code === ':') {
+        if (code === ":") {
             return "map/power";
         } 
         return null;
@@ -18,7 +18,7 @@ class Energizer extends Entity {
             targets: this,
             alpha: 0.0,
             duration: 100,
-            ease: 'linear',
+            ease: "linear",
             yoyo: true,
             delay: 100,
             loop: -1

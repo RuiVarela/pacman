@@ -18,7 +18,7 @@ class Map extends Phaser.Scene {
 
     constructor(config) {
         super(config);
-        console.log("Map constructor")
+        console.log("Map constructor");
 
         this.level = [];
         this.squareSize = App.squareSize;
@@ -26,7 +26,7 @@ class Map extends Phaser.Scene {
 
     preload() {
         console.log("Map preload");
-        this.load.atlas('BaseAtlas', BaseAtlasImage, BaseAtlasJson);
+        this.load.atlas("BaseAtlas", BaseAtlasImage, BaseAtlasJson);
     }
 
     create() {
@@ -34,13 +34,13 @@ class Map extends Phaser.Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        if (false) {
-            let atlas = this.textures.get('BaseAtlas');
-            let frames = atlas.getFrameNames();
-            for (var i = 0; i < frames.length; i++) {
-                console.log(frames[i]);
-            }
-        }
+        // if (false) {
+        //     let atlas = this.textures.get("BaseAtlas");
+        //     let frames = atlas.getFrameNames();
+        //     for (var i = 0; i < frames.length; i++) {
+        //         console.log(frames[i]);
+        //     }
+        // }
 
         //   var x = Phaser.Math.Between(0, 800);
         //  var y = Phaser.Math.Between(0, 600);
@@ -49,7 +49,7 @@ class Map extends Phaser.Scene {
         let json = MapJson;
         let data = json.data;
         this.rows = data.length;
-        this.cols = data[0].length
+        this.cols = data[0].length;
 
         for (let y = 0; y != this.rows; ++y) {
             this.level.push([]);
@@ -59,7 +59,7 @@ class Map extends Phaser.Scene {
             }
         }
 
-        this.pacman = new Pacman(this, this.squareSize, json.pacman_position)
+        this.pacman = new Pacman(this, this.squareSize, json.pacman_position);
     }
 
     createCell(x, y, code) {
@@ -77,7 +77,7 @@ class Map extends Phaser.Scene {
         return cell;
     }
 
-    update(time, delta) {
+    update(/*time, delta*/) {
        //  console.log("update: " + time + " delta: " + delta)
 
         if (this.cursors.left.isDown)

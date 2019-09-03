@@ -19,7 +19,7 @@ class Character extends Entity {
             return false;
 
         this.move = move;
-        console.log("setNextMove " + this.move);
+        //console.log("setNextMove " + this.move);
         return true;
     }
 }
