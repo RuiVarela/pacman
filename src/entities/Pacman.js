@@ -1,4 +1,5 @@
 import Character from "./Character";
+import Wall from "./Wall";
 
 class Pacman extends Character {
   constructor(scene, size, position) {
@@ -11,7 +12,7 @@ class Pacman extends Character {
         { key: "BaseAtlas", frame: "pacman/right_0" },
         { key: "BaseAtlas", frame: "pacman/filled" }
       ],
-      frameRate: 8,
+      frameRate: 16,
       repeat: -1
     });
 
@@ -22,38 +23,48 @@ class Pacman extends Character {
   }
 
   currentPosition() {
-    return {
-      x: this.x + this.displayWidth * 0.5,
-      y: this.y + this.displayHeight * 0.5
-    };
-  }
-
-  currentCell() {
-    let current_position = this.currentPosition();
-    return {
-      x: current_position.x / this.cell_size,
-      y: current_position.y / this.cell_size
-    };
+    return { x: this.x, y: this.y };
   }
 
   processMove() {
     console.log("processMove");
     let position = this.currentPosition();
 
+    let multiplier = 0.75;
+    let should_stop = false;
+
     if (this.move == Character.Move.Up) {
       this.angle = 270;
-      position.y -= this.cell_size;
+      position.y -= this.cell_size * multiplier;
     } else if (this.move == Character.Move.Down) {
       this.angle = 90;
-      position.y += this.cell_size;
+      position.y += this.cell_size * multiplier;
     } else if (this.move == Character.Move.Left) {
       this.angle = 180;
-      position.x -= this.cell_size;
+      position.x -= this.cell_size * multiplier;
     } else if (this.move == Character.Move.Right) {
       this.angle = 0;
-      position.x += this.cell_size;
+      position.x += this.cell_size * multiplier;
     } else {
+      should_stop = true;
+    }
 
+    if (!should_stop) {
+      // snap
+      let cell_x = Math.trunc(position.x / this.cell_size);
+      let cell_y = Math.trunc(position.y / this.cell_size);
+
+      position.x = cell_x * this.cell_size + this.cell_size * 0.5;
+      position.y = cell_y * this.cell_size + this.cell_size * 0.5;
+
+      let cell = this.scene.getCell(cell_x, cell_y);
+      if (cell instanceof Wall) {
+        should_stop = true;
+      }
+    }
+
+    if (should_stop) {
+      super.setNextMove(null);
       this.moving = false;
 
       if (this.anims.isPlaying) {
@@ -70,10 +81,11 @@ class Pacman extends Character {
     this.moving = true;
 
     // center position
-    position.x -= this.displayWidth * 0.5;
-    position.y -= this.displayHeight * 0.5;
+    //  position.x -= this.displayWidth * 0.5;
+    //  position.y -= this.displayHeight * 0.5;
 
-    let duration = 1000;
+
+    let duration = 1000 / 10; // assuming 10 tiles per second
 
     this.scene.tweens.add({
       targets: this,

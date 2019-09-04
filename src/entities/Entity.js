@@ -33,17 +33,18 @@ class Entity extends Phaser.GameObjects.Sprite {
 
         if (positions_array) {
             position = Entity.computePositionFromArray(positions_array);
-            position.x = position.x * size - size * 0.5;
-            position.y = position.y * size - size * 0.5;
+            position.x = position.x * size + size * 0.5;
+            position.y = position.y * size + size * 0.5;
         }
 
         super(scene, position.x, position.y, "BaseAtlas", image);
 
         this.cell_size = size;
+        this.character_size = size * 2;
 
         if (positions_array) {
-            this.displayWidth = size * 2;
-            this.displayHeight = size * 2;
+            this.displayWidth = this.character_size;
+            this.displayHeight = this.character_size;
         }
         else {
             this.displayWidth = size;

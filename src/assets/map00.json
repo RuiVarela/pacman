@@ -37,5 +37,5 @@
     ],
 
     "pacman_position_description" : "pacman starting position, it more than 1 pair is set, it will center pacman",
-    "pacman_position": [ 14,27, 15,27]
+    "pacman_position": [ 13,26, 14,26]
 }

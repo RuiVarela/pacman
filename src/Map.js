@@ -55,11 +55,18 @@ class Map extends Phaser.Scene {
             this.level.push([]);
             for (let x = 0; x != this.cols; ++x) {
                 let code = data[y][x];
-                this.level[y].push(this.createCell(x, y, code));           
+                this.level[y].push(this.createCell(x, y, code));
             }
         }
 
         this.pacman = new Pacman(this, this.squareSize, json.pacman_position);
+    }
+
+    getCell(x, y) {
+        if (x >= 0 && x < this.cols && y >= 0 && y < this.rows) {
+            return this.level[y][x];
+        }
+        return null;
     }
 
     createCell(x, y, code) {
@@ -78,7 +85,7 @@ class Map extends Phaser.Scene {
     }
 
     update(/*time, delta*/) {
-       //  console.log("update: " + time + " delta: " + delta)
+        //  console.log("update: " + time + " delta: " + delta)
 
         if (this.cursors.left.isDown)
             this.pacman.setNextMove(Character.Move.Left);
@@ -89,7 +96,7 @@ class Map extends Phaser.Scene {
         else if (this.cursors.down.isDown)
             this.pacman.setNextMove(Character.Move.Down);
     }
-    
+
 }
 
 export default Map;
