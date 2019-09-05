@@ -6,7 +6,7 @@ class Application {
     constructor() {
         this.version = "0.0.1";
 
-        this.squareSize = 8 * 2;
+        this.squareSize = 8;
         this.horizontalTiles = 28;
         this.verticalTiles = 36;
 
@@ -20,8 +20,14 @@ class Application {
         const config = {
             type: Phaser.AUTO,
             parent: "pacman",
-            width: this.width,
-            height: this.height,
+
+            scale: {
+                mode: Phaser.Scale.FIT,
+                autoCenter: Phaser.Scale.CENTER_BOTH,
+                width: this.width,
+                height: this.height
+            },
+
             scene: new Map()
         };
 
