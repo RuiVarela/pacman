@@ -10,67 +10,96 @@ class Pacman extends Character {
       frames: [
         { key: "BaseAtlas", frame: "pacman/right_1" },
         { key: "BaseAtlas", frame: "pacman/right_0" },
-        { key: "BaseAtlas", frame: "pacman/filled" }
+        { key: "BaseAtlas", frame: "pacman/filled" },
+        { key: "BaseAtlas", frame: "pacman/right_0" }
       ],
       frameRate: 16,
       repeat: -1
     });
 
     this.moving = false;
-
     this.anims.play(this.animation);
     this.anims.pause(this.animation.frames[2]);
   }
 
-  currentPosition() {
-    return { x: this.x, y: this.y };
-  }
 
-  processMove() {
-    console.log("processMove");
-    let position = this.currentPosition();
+  checkMove(move) {
+    let result = this.currentPosition();
 
-    let multiplier = 0.75;
-    let should_stop = false;
+    result.move = move;
+    result.angle = 0;
+    result.stop = false;
+    result.x_dir = 0;
+    result.y_dir = 0;
 
-    if (this.move == Character.Move.Up) {
-      this.angle = 270;
-      position.y -= this.cell_size * multiplier;
-    } else if (this.move == Character.Move.Down) {
-      this.angle = 90;
-      position.y += this.cell_size * multiplier;
-    } else if (this.move == Character.Move.Left) {
-      this.angle = 180;
-      position.x -= this.cell_size * multiplier;
-    } else if (this.move == Character.Move.Right) {
-      this.angle = 0;
-      position.x += this.cell_size * multiplier;
-    } else {
-      should_stop = true;
+    let distance = this.cell_size * 0.50001;
+
+    if (move == Character.Move.Up) {
+      result.angle = 270;
+      result.y -= distance;
+      result.y_dir = -1.0;
+    } else if (move == Character.Move.Down) {
+      result.angle = 90;
+      result.y += distance;
+      result.y_dir = 1.0;
+    } 
+    else if (move == Character.Move.Left) {
+      result.angle = 180;
+      result.x -= distance;
+      result.x_dir = -1.0;
+    } else if (move == Character.Move.Right) {
+      result.angle = 0;
+      result.x += distance;
+      result.x_dir = 1.0;
+    } 
+    else {
+      result.stop = true;
     }
 
-    if (!should_stop) {
-      // snap
-      let cell_x = Math.trunc(position.x / this.cell_size);
-      let cell_y = Math.trunc(position.y / this.cell_size);
 
-      position.x = cell_x * this.cell_size + this.cell_size * 0.5;
-      position.y = cell_y * this.cell_size + this.cell_size * 0.5;
 
-      let cell = this.scene.getCell(cell_x, cell_y);
+    if (!result.stop) {
+      let snaped = this.getSnapPositionToTile(result.x, result.y);
+
+      result.x = snaped.x;
+      result.y = snaped.y;
+
+      // colision test
+      let cell = this.scene.getCell(snaped.cell_x, snaped.cell_y);
       if (cell instanceof Wall) {
-        should_stop = true;
+        result.stop = true;
       }
     }
 
-    if (should_stop) {
+
+    if (result.stop) {
+      result.x_dir = 0;
+      result.y_dir = 0;
+    }
+
+    return result;
+  }
+
+  processMovement(delta_time) {
+    
+    let move_info = this.checkMove(this.move);
+    if (move_info.stop && this.move_info) {
+      move_info = this.checkMove(this.move_info.move);
+    }
+
+    //console.group("Move "  + JSON.stringify(move));
+    //console.table(move_info);
+    //console.groupEnd();
+
+    if (move_info.stop) {
       super.setNextMove(null);
-      this.moving = false;
+      this.move_info = null;
+      this.snapToTile();
+
 
       if (this.anims.isPlaying) {
         this.anims.pause(this.animation.frames[1]);
       }
-
       return;
     }
 
@@ -78,32 +107,24 @@ class Pacman extends Character {
       this.anims.resume();
     }
 
-    this.moving = true;
+    // snap positions to tile center
+    if (!this.move_info || this.move_info.move != move_info.move) {
+      this.snapToTile();
+    }
 
-    // center position
-    //  position.x -= this.displayWidth * 0.5;
-    //  position.y -= this.displayHeight * 0.5;
+    this.angle = move_info.angle;
+    this.move_info = move_info;
 
+    // 1 tile -> 100ms
+    let time_multiplier = delta_time / 100.0;
+    //let time_multiplier = delta_time / 1000.0;
 
-    let duration = 1000 / 10; // assuming 10 tiles per second
-
-    this.scene.tweens.add({
-      targets: this,
-      y: position.y,
-      x: position.x,
-      duration: duration,
-      ease: "Linear",
-      onComplete: () => { this.processMove(); }
-    });
+    this.x += this.cell_size * time_multiplier * move_info.x_dir;
+    this.y += this.cell_size * time_multiplier * move_info.y_dir;
   }
 
-  setNextMove(move) {
-    if (!super.setNextMove(move))
-      return;
-
-    if (!this.moving) {
-      this.processMove();
-    }
+  doUpdate(time, delta) { // eslint-disable-line no-unused-vars
+    this.processMovement(delta);
   }
 }
 

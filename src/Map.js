@@ -84,9 +84,7 @@ class Map extends Phaser.Scene {
         return cell;
     }
 
-    update(/*time, delta*/) {
-        //  console.log("update: " + time + " delta: " + delta)
-
+    update(time, delta) {
         if (this.cursors.left.isDown)
             this.pacman.setNextMove(Character.Move.Left);
         else if (this.cursors.right.isDown)
@@ -95,6 +93,8 @@ class Map extends Phaser.Scene {
             this.pacman.setNextMove(Character.Move.Up);
         else if (this.cursors.down.isDown)
             this.pacman.setNextMove(Character.Move.Down);
+
+        this.pacman.doUpdate(time, delta);
     }
 
 }
