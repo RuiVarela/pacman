@@ -24,48 +24,87 @@ class Pacman extends Character {
 
 
   checkMove(move) {
-    let result = this.currentPosition();
+    let current = this.currentPosition();
 
-    result.move = move;
-    result.angle = 0;
-    result.stop = false;
-    result.x_dir = 0;
-    result.y_dir = 0;
+    let result = {
+      x: current.x,
+      y: current.y,
+      cell_x_factor: current.cell_x_factor,
+      cell_y_factor: current.cell_y_factor,
+
+      target_x: current.x,
+      target_y: current.y,
+      move: move,
+      angle: 0,
+      stop: false,
+      x_dir: 0,
+      y_dir: 0,
+
+      on_change_point: false
+    };
+
 
     let distance = this.cell_size * 0.50001;
 
     if (move == Character.Move.Up) {
       result.angle = 270;
-      result.y -= distance;
+      result.target_y -= distance;
       result.y_dir = -1.0;
     } else if (move == Character.Move.Down) {
       result.angle = 90;
-      result.y += distance;
+      result.target_y += distance;
       result.y_dir = 1.0;
-    } 
+    }
     else if (move == Character.Move.Left) {
       result.angle = 180;
-      result.x -= distance;
+      result.target_x -= distance;
       result.x_dir = -1.0;
     } else if (move == Character.Move.Right) {
       result.angle = 0;
-      result.x += distance;
+      result.target_x += distance;
       result.x_dir = 1.0;
-    } 
+    }
     else {
       result.stop = true;
     }
 
 
-
+    // compute the target position
     if (!result.stop) {
-      let snaped = this.getSnapPositionToTile(result.x, result.y);
+      let target = this.getSnapPositionToTile(result.target_x, result.target_y);
+      result.target_x = target.x;
+      result.target_y = target.y;
 
-      result.x = snaped.x;
-      result.y = snaped.y;
+      result.target_cell_x = target.cell_x;
+      result.target_cell_y = target.cell_y;
 
-      // colision test
-      let cell = this.scene.getCell(snaped.cell_x, snaped.cell_y);
+      result.target_cell_x_factor = target.cell_x_factor;
+      result.target_cell_y_factor = target.cell_y_factor;
+    }
+
+
+
+    // we can only change directions on the cell center
+    if (!result.stop && this.move_info && this.move_info.move != move) {
+      if (this.move_info.move == Character.Move.Up) {
+        result.on_change_point = this.move_info.cell_y_factor >= 0.5 && result.cell_y_factor < 0.5;
+      } else if (this.move_info.move == Character.Move.Down) {
+        result.on_change_point = this.move_info.cell_y_factor <= 0.5 && result.cell_y_factor > 0.5;
+      } else if (this.move_info.move == Character.Move.Left) {
+        result.on_change_point = this.move_info.cell_x_factor >= 0.5 && result.cell_x_factor < 0.5;
+      } else if (this.move_info.move == Character.Move.Right) {
+        result.on_change_point = this.move_info.cell_x_factor <= 0.5 && result.cell_x_factor > 0.5;
+      }
+      
+      if (!result.on_change_point) {
+        result.stop = true;
+        //console.log("Change " + current.cell_x_factor + " " + current.cell_y_factor);
+      }
+    }
+
+    // colision test
+    if (!result.stop) {
+      let cell = this.scene.getCell(result.target_cell_x, result.target_cell_y);
       if (cell instanceof Wall) {
         result.stop = true;
       }
@@ -116,7 +155,7 @@ class Pacman extends Character {
     this.move_info = move_info;
 
     // 1 tile -> 100ms
-    let time_multiplier = delta_time / 100.0;
+    let time_multiplier = delta_time / 150.0;
     //let time_multiplier = delta_time / 1000.0;
 
     this.x += this.cell_size * time_multiplier * move_info.x_dir;

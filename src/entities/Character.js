@@ -15,21 +15,29 @@ class Character extends Entity {
     }
 
     currentPosition() {
-        return { x: this.x, y: this.y };
+        let position = this.getSnapPositionToTile(this.x, this.y);
+        position.x = this.x;
+        position.y = this.y;
+        return position;
     }
-
 
     getSnapPositionToTile(x, y) {
         let cell_size = this.cell_size;
-
+        let cell_x_factor = x / cell_size;
+        let cell_y_factor = y / cell_size;
         let cell_x = Math.trunc(x / cell_size);
         let cell_y = Math.trunc(y / cell_size);
+
+        cell_x_factor -= cell_x;
+        cell_y_factor -= cell_y;
 
         return {
             x: cell_x * cell_size + cell_size * 0.5,
             y: cell_y * cell_size + cell_size * 0.5,
             cell_x : cell_x,
-            cell_y : cell_y
+            cell_y : cell_y,
+            cell_x_factor : cell_x_factor,
+            cell_y_factor : cell_y_factor
         };
     }
 
