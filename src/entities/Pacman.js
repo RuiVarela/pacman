@@ -29,6 +29,8 @@ class Pacman extends Character {
     let result = {
       x: current.x,
       y: current.y,
+      cell_x: current.cell_x,
+      cell_y: current.cell_y,
       cell_x_factor: current.cell_x_factor,
       cell_y_factor: current.cell_y_factor,
 
@@ -68,7 +70,6 @@ class Pacman extends Character {
       result.stop = true;
     }
 
-
     // compute the target position
     if (!result.stop) {
       let target = this.getSnapPositionToTile(result.target_x, result.target_y);
@@ -82,10 +83,8 @@ class Pacman extends Character {
       result.target_cell_y_factor = target.cell_y_factor;
     }
 
-
-
-    // we can only change directions on the cell center
-    if (!result.stop && this.move_info && this.move_info.move != move) {
+    // check if we are on a change point
+    if (!result.stop && this.move_info) {
       if (this.move_info.move == Character.Move.Up) {
         result.on_change_point = this.move_info.cell_y_factor >= 0.5 && result.cell_y_factor < 0.5;
       } else if (this.move_info.move == Character.Move.Down) {
@@ -95,21 +94,46 @@ class Pacman extends Character {
       } else if (this.move_info.move == Character.Move.Right) {
         result.on_change_point = this.move_info.cell_x_factor <= 0.5 && result.cell_x_factor > 0.5;
       }
-      
+    }
+
+    // we can only change directions on the cell center
+    if (!result.stop && this.move_info && this.move_info.move != move) {
       if (!result.on_change_point) {
         result.stop = true;
         //console.log("Change " + current.cell_x_factor + " " + current.cell_y_factor);
       }
     }
 
-    // colision test
+    // wrap map
+    if (!result.stop) {
+      let cell = this.scene.getCell(result.cell_x, result.cell_y);
+
+      if (cell === null) {
+        // can't change directions outside the map
+        if (this.move_info && this.move_info.move != move) {
+          result.stop = true;
+        } else if (result.on_change_point) {
+          if (move == Character.Move.Right && result.cell_x === this.scene.cols) {
+            let cell_position = this.cellPosition(-1, result.cell_y);
+            this.x = cell_position.x;
+            this.y = cell_position.y;
+          } else if (move == Character.Move.Left && result.cell_x === -1) {
+            let cell_position = this.cellPosition(this.scene.cols, result.cell_y);
+            this.x = cell_position.x;
+            this.y = cell_position.y;
+          }
+        }
+      }
+    }
+
+
+    // wall colision test
     if (!result.stop) {
       let cell = this.scene.getCell(result.target_cell_x, result.target_cell_y);
       if (cell instanceof Wall) {
         result.stop = true;
       }
     }
-
 
     if (result.stop) {
       result.x_dir = 0;
@@ -119,8 +143,8 @@ class Pacman extends Character {
     return result;
   }
 
-  processMovement(delta_time) {
-    
+  doUpdate(time, delta) { // eslint-disable-line no-unused-vars
+
     let move_info = this.checkMove(this.move);
     if (move_info.stop && this.move_info) {
       move_info = this.checkMove(this.move_info.move);
@@ -131,7 +155,7 @@ class Pacman extends Character {
     //console.groupEnd();
 
     if (move_info.stop) {
-      super.setNextMove(null);
+      this.setNextMove(null);
       this.move_info = null;
       this.snapToTile();
 
@@ -155,15 +179,21 @@ class Pacman extends Character {
     this.move_info = move_info;
 
     // 1 tile -> 100ms
-    let time_multiplier = delta_time / 150.0;
+    let time_multiplier = delta / 150.0;
     //let time_multiplier = delta_time / 1000.0;
 
     this.x += this.cell_size * time_multiplier * move_info.x_dir;
     this.y += this.cell_size * time_multiplier * move_info.y_dir;
+
   }
 
-  doUpdate(time, delta) { // eslint-disable-line no-unused-vars
-    this.processMovement(delta);
+  setNextMove(move) {
+    if (this.move === move)
+      return false;
+
+    this.move = move;
+    //console.log("setNextMove " + this.move);
+    return true;
   }
 }
 

@@ -25,11 +25,15 @@ class Entity extends Phaser.GameObjects.Sprite {
         return position;
     }
 
-    constructor(scene, x, y, size, image, positions_array) {
-        var position = {
+    static cellPosition(x, y, size) {
+        return {
             x : size * x + size * 0.5,
             y : size * y + size * 0.5
         };
+    }
+
+    constructor(scene, x, y, size, image, positions_array) {
+        var position = Entity.cellPosition(x, y, size);
 
         if (positions_array) {
             position = Entity.computePositionFromArray(positions_array);
