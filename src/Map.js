@@ -84,6 +84,18 @@ class Map extends Phaser.Scene {
         return cell;
     }
 
+    setSpaceCell(x, y) {
+        if (x >= 0 && x < this.cols && y >= 0 && y < this.rows) {
+
+            if (this.level[y][x]) {
+                this.level[y][x].destroy();
+            }
+            
+            this.level[y][x] = new Space(this, x, y, this.squareSize);
+        }
+
+    }
+
     update(time, delta) {
         if (this.cursors.left.isDown)
             this.pacman.setNextMove(Character.Move.Left);
