@@ -193,7 +193,7 @@ class Pacman extends Character {
         this.chomp_sound.play();
       }
 
-    } else if (this.last_chomp && (this.last_chomp.cell_x != move_info.cell_x || this.last_chomp.cell_y != move_info.cell_y))  {
+    } else if (this.last_chomp && move_info.on_change_point && (this.last_chomp.cell_x != move_info.cell_x || this.last_chomp.cell_y != move_info.cell_y))  {
      
       this.last_chomp = null;
       if (this.chomp_sound.isPlaying) {
