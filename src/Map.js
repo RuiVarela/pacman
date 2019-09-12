@@ -6,12 +6,16 @@ import Dot from "./entities/Dot";
 import Phaser from "phaser";
 import Energizer from "./entities/Energizer";
 
+import Pacman from "./entities/Pacman";
+import Character from "./entities/Character";
+
 import BaseAtlasImage from "./assets/base_atlas.png";
 import BaseAtlasJson from "./assets/base_atlas.json";
 
 import MapJson from "./assets/map00.json";
-import Pacman from "./entities/Pacman";
-import Character from "./entities/Character";
+
+import ChompSound from "./assets/sounds/chomp.wav";
+
 
 
 class Map extends Phaser.Scene {
@@ -27,6 +31,7 @@ class Map extends Phaser.Scene {
     preload() {
         console.log("Map preload");
         this.load.atlas("BaseAtlas", BaseAtlasImage, BaseAtlasJson);
+        this.load.audio("ChompSound", ChompSound);
     }
 
     create() {

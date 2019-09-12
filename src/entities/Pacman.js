@@ -1,6 +1,7 @@
 import Character from "./Character";
 import Wall from "./Wall";
 import Dot from "./Dot";
+import Energizer from "./Energizer";
 
 class Pacman extends Character {
   constructor(scene, size, position) {
@@ -18,8 +19,9 @@ class Pacman extends Character {
       repeat: -1
     });
 
-    this.score = 0;
+    this.chomp_sound = scene.sound.add("ChompSound");
 
+    this.score = 0;
     this.moving = false;
     this.anims.play(this.animation);
     this.anims.pause(this.animation.frames[2]);
@@ -161,6 +163,10 @@ class Pacman extends Character {
       if (this.anims.isPlaying) {
         this.anims.pause(this.animation.frames[1]);
       }
+
+      if (this.chomp_sound.isPlaying) {
+        this.chomp_sound.stop();
+      }
     }
 
     let cell = this.scene.getCell(move_info.cell_x, move_info.cell_y);
@@ -175,6 +181,26 @@ class Pacman extends Character {
     if (move_info.stop) {
       return;
     }
+
+
+
+    // check chomp sound
+    if (cell instanceof Dot || cell instanceof Energizer) {
+      this.last_chomp = move_info;
+
+      if (!this.chomp_sound.isPlaying) {
+        this.chomp_sound.setLoop(true);
+        this.chomp_sound.play();
+      }
+
+    } else if (this.last_chomp && (this.last_chomp.cell_x != move_info.cell_x || this.last_chomp.cell_y != move_info.cell_y))  {
+     
+      this.last_chomp = null;
+      if (this.chomp_sound.isPlaying) {
+        this.chomp_sound.stop();
+      }
+    }
+
 
     if (!this.anims.isPlaying) {
       this.anims.resume();
