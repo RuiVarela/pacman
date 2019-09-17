@@ -7,6 +7,7 @@ class Pacman extends Character {
   constructor(scene, size, position) {
     super(scene, size, "pacman/filled", position);
 
+    this.setNextMove(null);
     this.animation = scene.anims.create({
       key: "pacman_move",
       frames: [

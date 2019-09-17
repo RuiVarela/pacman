@@ -11,7 +11,6 @@ class Character extends Entity {
 
     constructor(scene, size, image, position) {
         super(scene, null, null, size, image, position);
-        this.setNextMove(null);
     }
 
     currentPosition() {

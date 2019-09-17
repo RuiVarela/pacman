@@ -36,6 +36,12 @@
         "zxxxxxxxxxxxxxxxxxxxxxxxxxxc"
     ],
 
-    "pacman_position_description" : "pacman starting position, it more than 1 pair is set, it will center pacman",
-    "pacman_position": [ 13,26, 14,26]
+    "position_description" : "starting position, if more than 1 pair is set, it will center character",
+    "pacman_position": [ 13,26, 14,26],
+
+    "blinky_position": [ 13,14, 14,14],
+    "pinky_position": [ 13,17, 14,17],
+    "inky_position": [ 11,17, 12,17],
+    "clyde_position": [ 15,17, 16,17]
+
 }

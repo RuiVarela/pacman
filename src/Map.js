@@ -7,6 +7,10 @@ import Phaser from "phaser";
 import Energizer from "./entities/Energizer";
 
 import Pacman from "./entities/Pacman";
+import Blinky from "./entities/Blinky";
+import Pinky from "./entities/Pinky";
+import Inky from "./entities/Inky";
+import Clyde from "./entities/Clyde";
 import Character from "./entities/Character";
 
 import BaseAtlasImage from "./assets/base_atlas.png";
@@ -65,6 +69,10 @@ class Map extends Phaser.Scene {
         }
 
         this.pacman = new Pacman(this, this.squareSize, json.pacman_position);
+        this.blinky = new Blinky(this, this.squareSize, json.blinky_position);
+        this.pinky = new Pinky(this, this.squareSize, json.pinky_position);
+        this.inky = new Inky(this, this.squareSize, json.inky_position);
+        this.clyde = new Clyde(this, this.squareSize, json.clyde_position);
     }
 
     getCell(x, y) {
