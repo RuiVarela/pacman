@@ -120,6 +120,10 @@ class Map extends Phaser.Scene {
             this.pacman.setNextMove(Character.Move.Down);
 
         this.pacman.doUpdate(time, delta);
+        this.blinky.doUpdate(time, delta);
+        this.pinky.doUpdate(time, delta);
+        this.inky.doUpdate(time, delta);
+        this.clyde.doUpdate(time, delta);
     }
 
 }
