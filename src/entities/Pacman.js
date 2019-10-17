@@ -28,6 +28,12 @@ class Pacman extends Character {
   }
 
   doUpdate(time, delta) { // eslint-disable-line no-unused-vars
+
+    // nothing to do
+    if (!this.move) {
+      return;
+    }
+
     let move_info = this.checkMove(this.move);
     if (move_info.stop && this.move_info) {
       move_info = this.checkMove(this.move_info.move);
@@ -58,12 +64,19 @@ class Pacman extends Character {
       this.score += 10;
       this.scene.setSpaceCell(move_info.cell_x, move_info.cell_y);
     }
+    // check if we are on an energizer
+    else if (move_info.on_change_point && cell instanceof Energizer) {
+      this.score += 100;
+      this.scene.setSpaceCell(move_info.cell_x, move_info.cell_y);
+      //TODO
+    }
+
+
 
     // if we should stop, don't do anything else
     if (move_info.stop) {
       return;
     }
-
 
 
     // check chomp sound
@@ -88,32 +101,8 @@ class Pacman extends Character {
       this.anims.resume();
     }
 
-    // snap positions to tile center when changing directions
-    if (!this.move_info || this.move_info.move != move_info.move) {
-      this.snapToTile();
-    }
-    // wrap map when leaving screen
-    else if (move_info.screen_wrap_point && move_info.move == Character.Move.Right) {
-      let cell_position = this.cellPosition(-1, move_info.cell_y);
-      this.x = cell_position.x;
-      this.y = cell_position.y;
-    } else if (move_info.screen_wrap_point && move_info.move == Character.Move.Left) {
-      let cell_position = this.cellPosition(this.scene.cols, move_info.cell_y);
-      this.x = cell_position.x;
-      this.y = cell_position.y;
-    }
-
     this.angle = move_info.angle;
-    this.move_info = move_info;
-
-    // 10 tile per seconds at fullspeed
-    // level 1 speed if 80%
-    let speed_factor = 0.8;
-    let tile_duration = 1000.0 / (speed_factor * 10.0);
-    let time_multiplier = delta / tile_duration;
-
-    this.x += this.cell_size * time_multiplier * move_info.x_dir;
-    this.y += this.cell_size * time_multiplier * move_info.y_dir;
+    this.applyMoveInfo(delta, move_info);
   }
 
   setNextMove(move) {

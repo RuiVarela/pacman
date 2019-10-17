@@ -2,40 +2,94 @@ import Ghost from "./Ghost";
 import Character from "./Character";
 
 class Blinky extends Ghost {
+
   constructor(scene, size, position) {
     super(scene, size, "blinky", position);
   }
 
-  doUpdate(time, delta) { // eslint-disable-line no-unused-vars
-    //console.log("Blinky");
+  getNextAction(move, target) { // eslint-disable-line no-unused-vars
+    let routes = {};
+    routes[Character.Move.Up] = {};
+    routes[Character.Move.Down] = {};
+    routes[Character.Move.Left] = {};
+    routes[Character.Move.Right] = {};
+    //
+    // compute routes
+    //
+    let min = 100000000;
+    for (let key in routes) {
+      routes[key]["info"] = this.checkMove(key);
 
+      let x = target.cell_x - routes[key]["info"].target_cell_x;
+      let y = target.cell_y - routes[key]["info"].target_cell_y;
+      routes[key]["distance"] = Math.sqrt(x * x + y * y);
+
+      // we cannot invert direction
+      if (key === this.getInvertedMove(move)) {
+        routes[key]["info"].stop = true;
+      }
+
+      if (!routes[key]["info"].stop && routes[key]["distance"] < min) {
+        min = routes[key]["distance"];
+      }
+    }
+
+    //
+    // remove dead routes
+    //
+    for (let key in routes) {
+      if (routes[key]["info"].stop || routes[key]["distance"] > min) {
+        delete routes[key];
+      }
+    }
+
+    //
+    //up > left > down
+    //
+    if (Character.Move.Up in routes) {
+      return routes[Character.Move.Up].info;
+    } else if (Character.Move.Left in routes) {
+      return routes[Character.Move.Left].info;
+    } else if (Character.Move.Down in routes) {
+      return routes[Character.Move.Down].info;
+    } else if (Character.Move.Right in routes) {
+      return routes[Character.Move.Right].info;
+    }
+  }
+
+  doUpdate(time, delta) { // eslint-disable-line no-unused-vars
     let move = null;
-    if (this.move_info) {
-      move = this.move_info.move;
-    } else {
-      // we are starting
+
+    if (this.current_state == Ghost.State.Starting) {
       move = Character.Move.Left;
+      this.current_state = Ghost.State.Started;
+    } else {
+      move = this.move_info.move;
     }
 
     let move_info = this.checkMove(move);
-
-    
-
-
-    if (move_info.stop) {
-      return;
+    if (move_info.on_change_point) {
+      move_info = this.getNextAction(move, this.scene.pacman.currentPosition());
     }
 
-    this.move_info = move_info;
+    //
+    // setup the animation
+    //
+    move_info.angle = 0;
+    if (this.move_info && (this.move_info.move != move_info.move)) {
+      this.anims.stop();
 
-    // 10 tile per seconds at fullspeed
-    // level 1 speed if 80%
-    let speed_factor = 0.8;
-    let tile_duration = 1000.0 / (speed_factor * 10.0);
-    let time_multiplier = delta / tile_duration;
+      switch (move_info.move) {
+        case Character.Move.Up: this.anims.play(this.animation_up); break;
+        case Character.Move.Down: this.anims.play(this.animation_down); break;
+        case Character.Move.Left: this.anims.play(this.animation_left); break;
+        case Character.Move.Right: this.anims.play(this.animation_right); break;
+      }
+    }
 
-    this.x += this.cell_size * time_multiplier * move_info.x_dir;
-    this.y += this.cell_size * time_multiplier * move_info.y_dir;
+
+
+    this.applyMoveInfo(delta, move_info);
   }
 }
 

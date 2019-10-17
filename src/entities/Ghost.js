@@ -1,22 +1,24 @@
 import Character from "./Character";
 
+const State = Object.freeze({
+    Starting: "Starting",
+    Started: "Started"
+});
+
 
 class Ghost extends Character {
 
     constructor(scene, size, name, position) {
         super(scene, size, name + "/top_0", position);
 
+        this.current_state = State.Starting;
+
         this.animation_up = this.createGhostAnimation(name, Character.Move.Up);
         this.animation_down = this.createGhostAnimation(name, Character.Move.Down);
         this.animation_left = this.createGhostAnimation(name, Character.Move.Left);
         this.animation_right = this.createGhostAnimation(name, Character.Move.Right);
 
-
-
-    
         this.anims.play(this.animation_left);
-        //this.anims.pause(this.animation.frames[2]);
-        
     }
 
     createGhostAnimation(name, move) {
@@ -51,4 +53,5 @@ class Ghost extends Character {
 
 }
 
+Ghost.State = State;
 export default Ghost;

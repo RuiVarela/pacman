@@ -1,5 +1,4 @@
 import Ghost from "./Ghost";
-import Character from "./Character";
 
 class Pinky extends Ghost {
   constructor(scene, size, position) {
@@ -11,6 +10,8 @@ class Pinky extends Ghost {
   doUpdate(time, delta) { // eslint-disable-line no-unused-vars
     //console.log("pinky");
   }
+
+  
 }
 
 export default Pinky;

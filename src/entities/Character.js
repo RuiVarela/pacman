@@ -2,54 +2,64 @@ import Entity from "./Entity";
 import Wall from "./Wall";
 
 const Move = Object.freeze({
-    Up: "Up",
-    Down: "Down",
-    Left: "Left",
-    Right: "Right",
+  Up: "Up",
+  Down: "Down",
+  Left: "Left",
+  Right: "Right",
 });
 
 class Character extends Entity {
 
-    constructor(scene, size, image, position) {
-        super(scene, null, null, size, image, position);
+  constructor(scene, size, image, position) {
+    super(scene, null, null, size, image, position);
+  }
+
+  getInvertedMove(move) {
+    switch (move) {
+      case Character.Move.Up: return Character.Move.Down;
+      case Character.Move.Down: return Character.Move.Up;
+      case Character.Move.Left: return Character.Move.Right;
+      case Character.Move.Right: return Character.Move.Left;
     }
+    return Character.Move.Up;
+  }
 
-    currentPosition() {
-        let position = this.getSnapPositionToTile(this.x, this.y);
-        position.x = this.x;
-        position.y = this.y;
-        return position;
-    }
+  currentPosition() {
+    let position = this.getSnapPositionToTile(this.x, this.y);
+    position.x = this.x;
+    position.y = this.y;
+    return position;
+  }
 
-    cellPosition(x, y) {
-        return Entity.cellPosition(x, y, this.cell_size);
-    }
+  cellPosition(x, y) {
+    return Entity.cellPosition(x, y, this.cell_size);
+  }
 
-    getSnapPositionToTile(x, y) {
-        let cell_size = this.cell_size;
-        let cell_x_factor = x / cell_size;
-        let cell_y_factor = y / cell_size;
-        let cell_x = Math.trunc(x / cell_size);
-        let cell_y = Math.trunc(y / cell_size);
+  getSnapPositionToTile(x, y) {
+    let cell_size = this.cell_size;
+    let cell_x_factor = x / cell_size;
+    let cell_y_factor = y / cell_size;
+    let cell_x = Math.trunc(x / cell_size);
+    let cell_y = Math.trunc(y / cell_size);
 
-        cell_x_factor -= cell_x;
-        cell_y_factor -= cell_y;
+    cell_x_factor -= cell_x;
+    cell_y_factor -= cell_y;
 
-        return {
-            x: cell_x * cell_size + cell_size * 0.5,
-            y: cell_y * cell_size + cell_size * 0.5,
-            cell_x : cell_x,
-            cell_y : cell_y,
-            cell_x_factor : Math.abs(cell_x_factor),
-            cell_y_factor : Math.abs(cell_y_factor)
-        };
-    }
+    return {
+      x: cell_x * cell_size + cell_size * 0.5,
+      y: cell_y * cell_size + cell_size * 0.5,
+      cell_x: cell_x,
+      cell_y: cell_y,
+      cell_x_factor: Math.abs(cell_x_factor),
+      cell_y_factor: Math.abs(cell_y_factor)
+    };
+  }
 
-    snapToTile() {
-        let snaped = this.getSnapPositionToTile(this.x, this.y);
-        this.x = snaped.x;
-        this.y = snaped.y;
-    }
+  snapToTile() {
+    let snaped = this.getSnapPositionToTile(this.x, this.y);
+    this.x = snaped.x;
+    this.y = snaped.y;
+  }
 
 
   checkMove(move) {
@@ -114,7 +124,7 @@ class Character extends Entity {
     }
 
     // check if we are on a change point
-    if (!result.stop && this.move_info) {
+    if (!result.stop && this.move_info && !this.move_info.on_change_point) {
       if (this.move_info.move == Character.Move.Up) {
         result.on_change_point = this.move_info.cell_y_factor >= 0.5 && result.cell_y_factor < 0.5;
       } else if (this.move_info.move == Character.Move.Down) {
@@ -167,7 +177,34 @@ class Character extends Entity {
 
     return result;
   }
-  
+
+  applyMoveInfo(delta, move_info) {
+    // snap positions to tile center when changing directions
+    if (this.move_info && (this.move_info.move != move_info.move)) {
+      this.snapToTile();
+    }
+    // wrap map when leaving screen
+    else if (move_info.screen_wrap_point && move_info.move == Character.Move.Right) {
+      let cell_position = this.cellPosition(-1, move_info.cell_y);
+      this.x = cell_position.x;
+      this.y = cell_position.y;
+    } else if (move_info.screen_wrap_point && move_info.move == Character.Move.Left) {
+      let cell_position = this.cellPosition(this.scene.cols, move_info.cell_y);
+      this.x = cell_position.x;
+      this.y = cell_position.y;
+    }
+
+    this.move_info = move_info;
+
+    // 10 tile per seconds at fullspeed
+    // level 1 speed if 80%
+    let speed_factor = 0.8;
+    let tile_duration = 1000.0 / (speed_factor * 10.0);
+    let time_multiplier = delta / tile_duration;
+
+    this.x += this.cell_size * time_multiplier * move_info.x_dir;
+    this.y += this.cell_size * time_multiplier * move_info.y_dir;
+  }
 }
 
 Character.Move = Move;
