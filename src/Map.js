@@ -68,11 +68,30 @@ class Map extends Phaser.Scene {
             }
         }
 
+        this.ghost_house_start = json.ghost_house_start.slice();
+        this.blinky_start = json.ghost_house_start.slice();
+
+        this.pinky_start = json.ghost_house_start.slice();
+        this.pinky_start[1] += 3;
+        this.pinky_start[3] += 3;
+
+        this.inky_start = json.ghost_house_start.slice();
+        this.inky_start[0] -= 2;
+        this.inky_start[1] += 3;
+        this.inky_start[2] -= 2;
+        this.inky_start[3] += 3;
+
+        this.clyde_start = json.ghost_house_start.slice();
+        this.clyde_start[0] += 2;
+        this.clyde_start[1] += 3;
+        this.clyde_start[2] += 2;
+        this.clyde_start[3] += 3;
+
         this.pacman = new Pacman(this, this.squareSize, json.pacman_position);
-        this.blinky = new Blinky(this, this.squareSize, json.blinky_position);
-        this.pinky = new Pinky(this, this.squareSize, json.pinky_position);
-        this.inky = new Inky(this, this.squareSize, json.inky_position);
-        this.clyde = new Clyde(this, this.squareSize, json.clyde_position);
+        this.blinky = new Blinky(this, this.squareSize, this.blinky_start);
+        this.pinky = new Pinky(this, this.squareSize, this.pinky_start );
+        this.inky = new Inky(this, this.squareSize, this.inky_start);
+        this.clyde = new Clyde(this, this.squareSize, this.clyde_start);
     }
 
     getCell(x, y) {

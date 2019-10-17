@@ -2,7 +2,8 @@ import Character from "./Character";
 
 const State = Object.freeze({
     Starting: "Starting",
-    Started: "Started"
+    Chase: "Chase",
+    ReturnStartPosition: "ReturnStartPosition"
 });
 
 
@@ -17,6 +18,11 @@ class Ghost extends Character {
         this.animation_down = this.createGhostAnimation(name, Character.Move.Down);
         this.animation_left = this.createGhostAnimation(name, Character.Move.Left);
         this.animation_right = this.createGhostAnimation(name, Character.Move.Right);
+
+        this.animation_death_up = this.createGhostDeathAnimation(name, Character.Move.Up);
+        this.animation_death_down = this.createGhostDeathAnimation(name, Character.Move.Down);
+        this.animation_death_left = this.createGhostDeathAnimation(name, Character.Move.Left);
+        this.animation_death_right = this.createGhostDeathAnimation(name, Character.Move.Right);
 
         this.anims.play(this.animation_left);
     }
@@ -37,7 +43,7 @@ class Ghost extends Character {
         let key = name + "_move_" + move;
         key = key.toLowerCase();
 
-        console.log(key);
+        //console.log(key);
 
         return this.scene.anims.create({
             key: key,
@@ -50,6 +56,34 @@ class Ghost extends Character {
         });
     }
 
+    createGhostDeathAnimation(name, move) {
+        let move_name;
+
+        if (move === Character.Move.Up)
+            move_name = "top";
+        else if (move === Character.Move.Down)
+            move_name = "bottom";
+        else if (move === Character.Move.Left)
+            move_name = "left";
+        else if (move === Character.Move.Right)
+            move_name = "right";
+
+
+        let key = name + "_ghost_killed_" + move;
+        key = key.toLowerCase();
+
+        //console.log(key);
+
+        return this.scene.anims.create({
+            key: key,
+            frames: [
+                { key: "BaseAtlas", frame: "ghost_killed/" + move_name },
+                { key: "BaseAtlas", frame: "ghost_killed/" + move_name }
+            ],
+            frameRate: 10,
+            repeat: -1
+        });
+    }
 
 }
 
