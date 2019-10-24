@@ -1,9 +1,9 @@
 import Entity from "./Entity";
 import Character from "./Character";
 
-
 const State = Object.freeze({
     None: "None",
+    GhostHouse : "GhostHouse",
     Starting: "Starting",
     Chase: "Chase",
     Killed: "Killed",
@@ -15,6 +15,7 @@ class Ghost extends Character {
     constructor(scene, size, name, position) {
         super(scene, size, name + "/top_0", position);
 
+        this.start_position = { x: this.x, y: this.y };
         this.current_state = State.None;
 
         this.animation_up = this.createGhostAnimation(name, Character.Move.Up);
@@ -27,7 +28,7 @@ class Ghost extends Character {
         this.animation_death_left = this.createGhostDeathAnimation(name, Character.Move.Left);
         this.animation_death_right = this.createGhostDeathAnimation(name, Character.Move.Right);
 
-        this.anims.play(this.animation_left);
+        this.restart();
     }
 
     createGhostAnimation(name, move) {
@@ -158,12 +159,10 @@ class Ghost extends Character {
         }
 
 
-
         //
         // Starting
         //
         if (this.current_state == Ghost.State.Starting) {
-
             move = Character.Move.Left;
             this.current_state = Ghost.State.Chase;
             state_changed = true;
@@ -238,7 +237,102 @@ class Ghost extends Character {
 
         this.applyMoveInfo(delta, move_info);
     }
+
+    restart() {
+        this.current_state = Ghost.State.GhostHouse;
+        this.x = this.start_position.x;
+        this.y = this.start_position.y;
+        this.move_info = null;
+    }
+
+
+    startGhostHouse(sign_direction, repeate) {
+        let inverter = (sign) => {
+            this.anims.play(sign > 0 ? this.animation_down : this.animation_up);
+        };
+
+        inverter(sign_direction);
+        this.ghost_house_tween = this.scene.tweens.add({
+            targets: this,
+            y: this.y + this.cell_size * sign_direction,
+            duration: 500,
+            yoyo: true,
+            repeat: repeate,
+            onYoyo: function () { 
+                inverter(sign_direction * -1);
+            },
+            onRepeat: () => { 
+                inverter(sign_direction);
+            },
+            onComplete: () => { this.onGhostUpAndDownEnd(); }
+        });
+    }
+    onGhostUpAndDownEnd() {
+        console.log(" onGhostUpAndDownEnd()");
+    }
+    
 }
 
 Ghost.State = State;
-export default Ghost;
+
+
+//
+// Blinky
+//
+class Blinky extends Ghost {
+    constructor(scene, size, position) {
+        super(scene, size, "blinky", position);
+    }
+    
+    restart() {
+        super.restart();
+        this.current_state = Ghost.State.Starting;
+        this.anims.play(this.animation_left);
+    }
+}
+
+
+//
+// Inky
+//
+class Inky extends Ghost {
+    constructor(scene, size, position) {
+        super(scene, size, "inky", position);
+    }
+
+    restart() {
+        super.restart();
+        this.startGhostHouse(1, 3);
+    }
+}
+
+//
+// Pinky
+//
+class Pinky extends Ghost {
+    constructor(scene, size, position) {
+        super(scene, size, "pinky", position);
+    }
+
+
+    restart() {
+        super.restart();
+        this.startGhostHouse(-1, 6);
+    }
+}
+
+//
+// Clyde
+//
+class Clyde extends Ghost {
+    constructor(scene, size, position) {
+        super(scene, size, "clyde", position);
+    }
+
+    restart() {
+        super.restart();
+        this.startGhostHouse(1, 9);
+    }
+}
+
+export { Ghost, Blinky, Inky, Pinky, Clyde };

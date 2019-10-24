@@ -1,18 +1,12 @@
-import App from "./Application";
-
-import Wall from "./entities/Wall";
-import Space from "./entities/Space";
-import Dot from "./entities/Dot";
 import Phaser from "phaser";
-import Energizer from "./entities/Energizer";
+
+import App from "./Application";
+import { Wall, Space, Dot, Energizer}  from "./entities/Static";
+
 
 import Pacman from "./entities/Pacman";
-import Ghost from "./entities/Ghost";
-import Blinky from "./entities/Blinky";
-import Pinky from "./entities/Pinky";
-import Inky from "./entities/Inky";
-import Clyde from "./entities/Clyde";
 import Character from "./entities/Character";
+import { Ghost, Blinky, Pinky, Inky, Clyde } from "./entities/Ghost";
 
 import BaseAtlasImage from "./assets/base_atlas.png";
 import BaseAtlasJson from "./assets/base_atlas.json";
@@ -23,8 +17,6 @@ import FontPng from "./assets/atari-classic.png";
 import FontXml from "./assets/atari-classic.xml";
 
 import ChompSound from "./assets/sounds/chomp.wav";
-
-
 
 class Map extends Phaser.Scene {
 
@@ -76,29 +68,29 @@ class Map extends Phaser.Scene {
         }
 
         this.ghost_house_start = json.ghost_house_start.slice();
-        this.blinky_start = json.ghost_house_start.slice();
+        let blinky_start = json.ghost_house_start.slice();
 
-        this.pinky_start = json.ghost_house_start.slice();
-        this.pinky_start[1] += 3;
-        this.pinky_start[3] += 3;
+        let pinky_start = json.ghost_house_start.slice();
+        pinky_start[1] += 3;
+        pinky_start[3] += 3 + 1;
 
-        this.inky_start = json.ghost_house_start.slice();
-        this.inky_start[0] -= 2;
-        this.inky_start[1] += 3;
-        this.inky_start[2] -= 2;
-        this.inky_start[3] += 3;
+        let inky_start = json.ghost_house_start.slice();
+        inky_start[0] -= 2;
+        inky_start[1] += 3 - 1;
+        inky_start[2] -= 2;
+        inky_start[3] += 3;
 
-        this.clyde_start = json.ghost_house_start.slice();
-        this.clyde_start[0] += 2;
-        this.clyde_start[1] += 3;
-        this.clyde_start[2] += 2;
-        this.clyde_start[3] += 3;
+        let clyde_start = json.ghost_house_start.slice();
+        clyde_start[0] += 2;
+        clyde_start[1] += 3 - 1;
+        clyde_start[2] += 2;
+        clyde_start[3] += 3;
 
         this.pacman = new Pacman(this, this.squareSize, json.pacman_position);
-        this.blinky = new Blinky(this, this.squareSize, this.blinky_start);
-        this.pinky = new Pinky(this, this.squareSize, this.pinky_start);
-        this.inky = new Inky(this, this.squareSize, this.inky_start);
-        this.clyde = new Clyde(this, this.squareSize, this.clyde_start);
+        this.blinky = new Blinky(this, this.squareSize, blinky_start);
+        this.pinky = new Pinky(this, this.squareSize, pinky_start);
+        this.inky = new Inky(this, this.squareSize, inky_start);
+        this.clyde = new Clyde(this, this.squareSize, clyde_start);
 
         this.score_text = this.add.bitmapText(0, this.squareSize, "arcade", "").setFontSize(this.squareSize);
 
@@ -143,8 +135,6 @@ class Map extends Phaser.Scene {
     incrementScore(amount) {
         this.score += amount;
     }
-
-
 
     checkCollision(pacman_position, ghost) { // eslint-disable-line no-unused-vars
         if (ghost.move_info &&

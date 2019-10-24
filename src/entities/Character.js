@@ -1,5 +1,5 @@
 import Entity from "./Entity";
-import Wall from "./Wall";
+import { Wall }  from "./Static";
 
 const Move = Object.freeze({
   Up: "Up",
