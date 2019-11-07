@@ -245,7 +245,9 @@ class Ghost extends Character {
         this.move_info = null;
     }
 
-
+    //
+    // Starts the in ghost house sequence
+    //
     startGhostHouse(sign_direction, repeate) {
         let inverter = (sign) => {
             this.anims.play(sign > 0 ? this.animation_down : this.animation_up);
@@ -255,7 +257,7 @@ class Ghost extends Character {
         this.ghost_house_tween = this.scene.tweens.add({
             targets: this,
             y: this.y + this.cell_size * sign_direction,
-            duration: 500,
+            duration: 300,
             yoyo: true,
             repeat: repeate,
             onYoyo: function () { 
@@ -264,13 +266,50 @@ class Ghost extends Character {
             onRepeat: () => { 
                 inverter(sign_direction);
             },
-            onComplete: () => { this.onGhostUpAndDownEnd(); }
+            onComplete: () => { 
+                this.onGhostUpAndDownEnd();
+            }
         });
     }
+
+    startGhostHouseExitSize(sign_direction) {
+        let start_cell = Entity.computePositionFromArray(this.scene.ghost_house_start);
+        let start_position = Entity.cellPosition(start_cell.x, start_cell.y, this.cell_size);
+
+        this.anims.play((sign_direction > 0) ? this.animation_right : this.animation_left);
+        this.ghost_house_tween = this.scene.tweens.add({
+            targets: this,
+            x: start_position.x,
+            duration: 250,
+            onComplete: () => { 
+                this.startGhostHouseExitUp(250);
+            }
+        });
+    }
+
+    //
+    // starts the final up movement within the ghost house
+    //
+    startGhostHouseExitUp(time) {
+        let start_cell = Entity.computePositionFromArray(this.scene.ghost_house_start);
+        let start_position = Entity.cellPosition(start_cell.x, start_cell.y, this.cell_size);
+        this.anims.play(this.animation_up);
+        this.ghost_house_tween = this.scene.tweens.add({
+            targets: this,
+            y: start_position.y,
+            duration: time,
+            onComplete: () => { 
+                this.ghost_house_tween = null;
+                this.current_state = Ghost.State.Starting;
+                this.anims.play(this.animation_left);
+                this.move_info = null;
+            }
+        });
+    }
+
     onGhostUpAndDownEnd() {
         console.log(" onGhostUpAndDownEnd()");
     }
-    
 }
 
 Ghost.State = State;
@@ -302,7 +341,11 @@ class Inky extends Ghost {
 
     restart() {
         super.restart();
-        this.startGhostHouse(1, 3);
+        this.startGhostHouse(1, 9);
+    }
+
+    onGhostUpAndDownEnd() {
+        this.startGhostHouseExitSize(1);
     }
 }
 
@@ -314,10 +357,13 @@ class Pinky extends Ghost {
         super(scene, size, "pinky", position);
     }
 
-
     restart() {
         super.restart();
-        this.startGhostHouse(-1, 6);
+        this.startGhostHouse(-1, 3);
+    }
+
+    onGhostUpAndDownEnd() {
+        this.startGhostHouseExitUp(500);
     }
 }
 
@@ -331,7 +377,11 @@ class Clyde extends Ghost {
 
     restart() {
         super.restart();
-        this.startGhostHouse(1, 9);
+        this.startGhostHouse(1, 12);
+    }
+
+    onGhostUpAndDownEnd() {
+        this.startGhostHouseExitSize(-1);
     }
 }
 
