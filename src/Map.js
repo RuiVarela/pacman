@@ -3,7 +3,6 @@ import Phaser from "phaser";
 import App from "./Application";
 import { Wall, Space, Dot, Energizer}  from "./entities/Static";
 
-
 import Pacman from "./entities/Pacman";
 import Character from "./entities/Character";
 import { Ghost, Blinky, Pinky, Inky, Clyde } from "./entities/Ghost";

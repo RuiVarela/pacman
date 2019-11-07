@@ -9,7 +9,6 @@ const Move = Object.freeze({
 });
 
 class Character extends Entity {
-
   constructor(scene, size, image, position) {
     super(scene, null, null, size, image, position);
   }

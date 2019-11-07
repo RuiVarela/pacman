@@ -1,7 +1,6 @@
 import Character from "./Character";
 import { Dot, Energizer }  from "./Static";
 
-
 class Pacman extends Character {
   constructor(scene, size, position) {
     super(scene, size, "pacman/filled", position);
