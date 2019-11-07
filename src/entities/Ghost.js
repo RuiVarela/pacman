@@ -3,11 +3,12 @@ import Character from "./Character";
 
 const State = Object.freeze({
     None: "None",
-    GhostHouse : "GhostHouse",
+    GhostHouse: "GhostHouse",
     Starting: "Starting",
     Chase: "Chase",
     Killed: "Killed",
-    ReturnStartPosition: "ReturnStartPosition"
+    ReturnStartPosition: "ReturnStartPosition",
+    Respawn: "Respawn"
 });
 
 class Ghost extends Character {
@@ -172,7 +173,6 @@ class Ghost extends Character {
         // Return to start
         //
         else if (this.current_state == Ghost.State.ReturnStartPosition) {
-
             let start_cell = Entity.computePositionFromArray(this.scene.ghost_house_start);
             let start_position = Entity.cellPosition(start_cell.x, start_cell.y, this.cell_size);
 
@@ -181,17 +181,12 @@ class Ghost extends Character {
             let distance = Math.sqrt(x * x + y * y);
 
             if (distance < 1.0) {
-                this.x = start_position.x;
-                this.y = start_position.y;
-                this.current_state = Ghost.State.Starting;
-                move = this.move_info.move;
-                state_changed = true;
+                this.startGhostRespawn(start_position);
             }
             else {
                 target_position = { cell_x: start_cell.x, cell_y: start_cell.y };
                 move = this.move_info.move;
             }
-
         }
         //
         // Chase
@@ -260,13 +255,13 @@ class Ghost extends Character {
             duration: 300,
             yoyo: true,
             repeat: repeate,
-            onYoyo: function () { 
+            onYoyo: function () {
                 inverter(sign_direction * -1);
             },
-            onRepeat: () => { 
+            onRepeat: () => {
                 inverter(sign_direction);
             },
-            onComplete: () => { 
+            onComplete: () => {
                 this.onGhostUpAndDownEnd();
             }
         });
@@ -281,7 +276,7 @@ class Ghost extends Character {
             targets: this,
             x: start_position.x,
             duration: 250,
-            onComplete: () => { 
+            onComplete: () => {
                 this.startGhostHouseExitUp(250);
             }
         });
@@ -298,7 +293,7 @@ class Ghost extends Character {
             targets: this,
             y: start_position.y,
             duration: time,
-            onComplete: () => { 
+            onComplete: () => {
                 this.ghost_house_tween = null;
                 this.current_state = Ghost.State.Starting;
                 this.anims.play(this.animation_left);
@@ -307,9 +302,26 @@ class Ghost extends Character {
         });
     }
 
-    onGhostUpAndDownEnd() {
-        console.log(" onGhostUpAndDownEnd()");
+
+    //
+    // starts the respawn animation
+    //
+    startGhostRespawn(start_position) {
+        this.x = start_position.x;
+        this.y = start_position.y;
+        this.move_info = null;
+        this.current_state = Ghost.State.Respawn;
+ 
+        this.anims.play(this.animation_down);
+        this.ghost_house_tween = this.scene.tweens.add({
+            targets: this,
+            y: start_position.y + 3.5 * this.cell_size,
+            duration: 500,
+            onComplete: () => this.startGhostHouseExitUp(500)
+        });  
     }
+
+    onGhostUpAndDownEnd() { }
 }
 
 Ghost.State = State;
@@ -322,7 +334,7 @@ class Blinky extends Ghost {
     constructor(scene, size, position) {
         super(scene, size, "blinky", position);
     }
-    
+
     restart() {
         super.restart();
         this.current_state = Ghost.State.Starting;
