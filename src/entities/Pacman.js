@@ -111,7 +111,6 @@ class Pacman extends Character {
     //console.log("setNextMove " + this.move);
     return true;
   }
-
 }
 
 export default Pacman;

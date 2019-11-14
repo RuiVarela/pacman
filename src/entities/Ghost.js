@@ -148,8 +148,7 @@ class Ghost extends Character {
         let move = null;
 
         let state_changed = false;
-        let pacman_position = this.scene.pacman.currentPosition();
-        let target_position = pacman_position;
+        let target_position = this.computeTargetPosition();
 
         //
         // just got killed
@@ -321,7 +320,29 @@ class Ghost extends Character {
         });  
     }
 
-    onGhostUpAndDownEnd() { }
+
+    // computes the position ahead of pacman a number of tiles
+    computeDeltaPositionFromPacman(cells) {
+        let position = this.scene.pacman.currentPosition();
+        let angle = this.scene.pacman.angle;
+        let distance = cells * this.cell_size;
+        let x = position.x;
+        let y = position.y;
+
+        if (angle == 270) 
+            y -= distance;
+        else if (angle == 90)
+            y += distance;
+        else if (angle == 180)
+            x -= distance;
+        else if (angle == 0) 
+            x += distance;
+
+        position = this.getSnapPositionToTile(x, y);
+        position.x = x;
+        position.y = y;
+        return position;
+    }
 }
 
 Ghost.State = State;
@@ -340,6 +361,13 @@ class Blinky extends Ghost {
         this.current_state = Ghost.State.Starting;
         this.anims.play(this.animation_left);
     }
+
+    
+    computeTargetPosition() {
+        return this.scene.pacman.currentPosition();
+    }
+
+
 }
 
 
@@ -359,6 +387,18 @@ class Inky extends Ghost {
     onGhostUpAndDownEnd() {
         this.startGhostHouseExitSize(1);
     }
+
+    computeTargetPosition() {
+        let pacman_position = this.computeDeltaPositionFromPacman(2);
+        let blinky_position = this.scene.blinky.currentPosition();
+        let x = 2 * (pacman_position.x - blinky_position.x);
+        let y = 2 * (pacman_position.y - blinky_position.y);
+
+        let position = this.getSnapPositionToTile(x, y);
+        position.x = x;
+        position.y = y;
+        return position;
+    }
 }
 
 //
@@ -377,6 +417,10 @@ class Pinky extends Ghost {
     onGhostUpAndDownEnd() {
         this.startGhostHouseExitUp(500);
     }
+
+    computeTargetPosition() {
+        return this.computeDeltaPositionFromPacman(4);
+    }
 }
 
 //
@@ -394,6 +438,10 @@ class Clyde extends Ghost {
 
     onGhostUpAndDownEnd() {
         this.startGhostHouseExitSize(-1);
+    }
+
+    computeTargetPosition() {
+        return this.scene.pacman.currentPosition();
     }
 }
 
