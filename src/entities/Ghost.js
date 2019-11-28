@@ -383,8 +383,6 @@ class Blinky extends Ghost {
     computeTargetPosition() {
         return this.scene.pacman.currentPosition();
     }
-
-
 }
 
 
@@ -458,7 +456,17 @@ class Clyde extends Ghost {
     }
 
     computeTargetPosition() {
-        return this.scene.pacman.currentPosition();
+        let pacman_position = this.scene.pacman.currentPosition();
+        let x = 2 * (pacman_position.x - this.x);
+        let y = 2 * (pacman_position.y - this.y);
+        let distance = Math.sqrt(x * x + y * y);
+        let threshold = 8 * this.cell_size;
+
+        if (distance > threshold) {
+            return pacman_position;
+        } else {
+            return this.scatter_position;
+        }
     }
 }
 
