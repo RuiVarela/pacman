@@ -6,6 +6,7 @@ const State = Object.freeze({
     GhostHouse: "GhostHouse",
     Starting: "Starting",
     Chase: "Chase",
+    Scatter: "Scatter",
     Killed: "Killed",
     ReturnStartPosition: "ReturnStartPosition",
     Respawn: "Respawn"
@@ -13,8 +14,12 @@ const State = Object.freeze({
 
 class Ghost extends Character {
 
-    constructor(scene, size, name, position) {
+    constructor(scene, size, name, position, scatter) {
         super(scene, size, name + "/top_0", position);
+
+        this.scatter_position = Entity.computePositionFromArray(scatter);
+        this.scatter_position = this.getSnapPositionToTile(this.scatter_position.x * size, this.scatter_position.y * size);
+        //this.scene.add.bitmapText(this.scatter_position.x, this.scatter_position.y, "arcade", name).setFontSize(8);
 
         this.start_position = { x: this.x, y: this.y };
         this.current_state = State.None;
@@ -148,7 +153,14 @@ class Ghost extends Character {
         let move = null;
 
         let state_changed = false;
-        let target_position = this.computeTargetPosition();
+        let target_position;
+        
+        if (this.current_state == Ghost.State.Scatter) {
+            target_position = this.scatter_position;
+        } else {
+            target_position = this.computeTargetPosition();
+        }
+
 
         //
         // just got killed
@@ -191,7 +203,12 @@ class Ghost extends Character {
         // Chase
         //
         else if (this.current_state == Ghost.State.Chase) {
-
+            move = this.move_info.move;
+        }
+        //
+        // Scatter
+        //
+        else if (this.current_state == Ghost.State.Scatter) {
             move = this.move_info.move;
         }
 
@@ -352,8 +369,8 @@ Ghost.State = State;
 // Blinky
 //
 class Blinky extends Ghost {
-    constructor(scene, size, position) {
-        super(scene, size, "blinky", position);
+    constructor(scene, size, position, scatter) {
+        super(scene, size, "blinky", position, scatter);
     }
 
     restart() {
@@ -375,8 +392,8 @@ class Blinky extends Ghost {
 // Inky
 //
 class Inky extends Ghost {
-    constructor(scene, size, position) {
-        super(scene, size, "inky", position);
+    constructor(scene, size, position, scatter) {
+        super(scene, size, "inky", position, scatter);
     }
 
     restart() {
@@ -405,8 +422,8 @@ class Inky extends Ghost {
 // Pinky
 //
 class Pinky extends Ghost {
-    constructor(scene, size, position) {
-        super(scene, size, "pinky", position);
+    constructor(scene, size, position, scatter) {
+        super(scene, size, "pinky", position, scatter);
     }
 
     restart() {
@@ -427,8 +444,8 @@ class Pinky extends Ghost {
 // Clyde
 //
 class Clyde extends Ghost {
-    constructor(scene, size, position) {
-        super(scene, size, "clyde", position);
+    constructor(scene, size, position, scatter) {
+        super(scene, size, "clyde", position, scatter);
     }
 
     restart() {

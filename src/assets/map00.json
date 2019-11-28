@@ -37,6 +37,11 @@
     ],
 
     "position_description" : "starting position, if more than 1 pair is set, it will center character",
-    "pacman_position": [ 13,26, 14,26],
-    "ghost_house_start": [13,14, 14,14]
+    "pacman_position": [13,26, 14,26],
+    "ghost_house_start": [13,14, 14,14],
+
+    "blinky_scatter_position": [25,0],
+    "inky_scatter_position": [27, 34],
+    "pinky_scatter_position": [2,0],
+    "clyde_scatter_position": [0, 34]
 }

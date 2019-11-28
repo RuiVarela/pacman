@@ -86,10 +86,10 @@ class Map extends Phaser.Scene {
         clyde_start[3] += 3;
 
         this.pacman = new Pacman(this, this.squareSize, json.pacman_position);
-        this.blinky = new Blinky(this, this.squareSize, blinky_start);
-        this.pinky = new Pinky(this, this.squareSize, pinky_start);
-        this.inky = new Inky(this, this.squareSize, inky_start);
-        this.clyde = new Clyde(this, this.squareSize, clyde_start);
+        this.blinky = new Blinky(this, this.squareSize, blinky_start, json.blinky_scatter_position);
+        this.pinky = new Pinky(this, this.squareSize, pinky_start, json.pinky_scatter_position);
+        this.inky = new Inky(this, this.squareSize, inky_start, json.inky_scatter_position);
+        this.clyde = new Clyde(this, this.squareSize, clyde_start, json.clyde_scatter_position);
 
         this.score_text = this.add.bitmapText(0, this.squareSize, "arcade", "").setFontSize(this.squareSize);
 
