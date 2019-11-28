@@ -21,6 +21,7 @@ class Ghost extends Character {
         this.scatter_position = this.getSnapPositionToTile(this.scatter_position.x * size, this.scatter_position.y * size);
         //this.scene.add.bitmapText(this.scatter_position.x, this.scatter_position.y, "arcade", name).setFontSize(8);
 
+
         this.start_position = { x: this.x, y: this.y };
         this.current_state = State.None;
 
@@ -176,9 +177,8 @@ class Ghost extends Character {
         //
         if (this.current_state == Ghost.State.Starting) {
             move = Character.Move.Left;
-            this.current_state = Ghost.State.Chase;
+            this.current_state = this.scene.global_ghost_state;
             state_changed = true;
-
         }
         //
         // Return to start
@@ -200,15 +200,16 @@ class Ghost extends Character {
             }
         }
         //
-        // Chase
+        // Scatter / Chase
         //
-        else if (this.current_state == Ghost.State.Chase) {
-            move = this.move_info.move;
-        }
-        //
-        // Scatter
-        //
-        else if (this.current_state == Ghost.State.Scatter) {
+        else if (this.current_state == Ghost.State.Chase || this.current_state == Ghost.State.Scatter) {
+
+            // this the scater mode change?
+            if (this.current_state != this.scene.global_ghost_state) {
+                this.current_state = this.scene.global_ghost_state;
+                state_changed = true;
+            }
+
             move = this.move_info.move;
         }
 

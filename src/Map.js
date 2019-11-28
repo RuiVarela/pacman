@@ -66,6 +66,10 @@ class Map extends Phaser.Scene {
             }
         }
 
+        this.scatter_count = 0;
+        this.global_ghost_state = null;
+        this.global_ghost_state_start = -1;
+
         this.ghost_house_start = json.ghost_house_start.slice();
         let blinky_start = json.ghost_house_start.slice();
 
@@ -146,7 +150,19 @@ class Map extends Phaser.Scene {
         }
     }
 
+    changeState(time, state) {
+        //console.log("Change to state: " + state + "[" + this.scatter_count+ "]");
+        this.global_ghost_state_start = time;
+        this.global_ghost_state = state;
+        if (this.global_ghost_state == Ghost.State.Scatter) {
+            this.scatter_count++;
+        }
+    }
+
     update(time, delta) {
+        if (this.global_ghost_state_start < 0.0) 
+            this.changeState(time, Ghost.State.Scatter);
+        
         if (this.cursors.left.isDown)
             this.pacman.setNextMove(Character.Move.Left);
         else if (this.cursors.right.isDown)
@@ -169,6 +185,13 @@ class Map extends Phaser.Scene {
         this.inky.doUpdate(time, delta);
         this.clyde.doUpdate(time, delta);
 
+
+        let state_duration = (time - this.global_ghost_state_start) / 1000;
+        if (this.global_ghost_state == Ghost.State.Scatter && state_duration > 7) { 
+            this.changeState(time, Ghost.State.Chase);
+        } else if ( this.scatter_count < 4 && this.global_ghost_state == Ghost.State.Chase && state_duration > 20) { 
+            this.changeState(time, Ghost.State.Scatter);
+        }
 
         //
         // Score text
