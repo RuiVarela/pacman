@@ -15,7 +15,7 @@ import MapJson from "./assets/map00.json";
 import FontPng from "./assets/atari-classic.png";
 import FontXml from "./assets/atari-classic.xml";
 
-import ChompSound from "./assets/sounds/chomp.wav";
+import ChompSound from "./assets/chomp.wav";
 
 class Map extends Phaser.Scene {
 

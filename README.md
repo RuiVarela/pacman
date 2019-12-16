@@ -1,9 +1,10 @@
 # Pacman
+An relaxed implementation of pacman.   
+This is a good exercise to lear phaser. 
+Remender pacman never dies. at least until someone implements it.
 
-The pacman game
 
 ## Requirements
-
 [Node.js](https://nodejs.org) is required to install dependencies and run scripts via `npm`.
 
 

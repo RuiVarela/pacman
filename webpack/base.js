@@ -32,7 +32,9 @@ module.exports = {
       WEBGL_RENDERER: JSON.stringify(true)
     }),
     new HtmlWebpackPlugin({
-      template: "./index.html"
+      title: "Pacaman almost classic game",
+      template: "./index.html",
+      favicon: "./src/assets/favicon.ico",
     })
   ]
 };
