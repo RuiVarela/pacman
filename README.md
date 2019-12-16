@@ -3,6 +3,9 @@ An relaxed implementation of pacman.
 This is a good exercise to learn phaser.    
 Remender pacman never dies. at least until someone implements it.
 
+![Pacman](https://github.com/RuiVarela/pacman/raw/master/readme00.gif)
+
+
 
 ## Requirements
 [Node.js](https://nodejs.org) is required to install dependencies and run scripts via `npm`.
