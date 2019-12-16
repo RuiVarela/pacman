@@ -1,6 +1,6 @@
 # Pacman
 An relaxed implementation of pacman.   
-This is a good exercise to lear phaser. 
+This is a good exercise to learn phaser.    
 Remender pacman never dies. at least until someone implements it.
 
 
