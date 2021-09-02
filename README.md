@@ -1,7 +1,7 @@
 # Pacman
 An relaxed implementation of pacman.   
 This is a good exercise to learn phaser.    
-Remenber pacman never dies. at least until someone implements it.
+Remember pacman never dies. at least until someone implements it.
 
 ![Pacman](https://github.com/RuiVarela/pacman/raw/master/readme00.gif)
 
