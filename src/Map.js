@@ -162,15 +162,32 @@ class Map extends Phaser.Scene {
     update(time, delta) {
         if (this.global_ghost_state_start < 0.0) 
             this.changeState(time, Ghost.State.Scatter);
-        
-        if (this.cursors.left.isDown)
-            this.pacman.setNextMove(Character.Move.Left);
-        else if (this.cursors.right.isDown)
-            this.pacman.setNextMove(Character.Move.Right);
-        else if (this.cursors.up.isDown)
-            this.pacman.setNextMove(Character.Move.Up);
-        else if (this.cursors.down.isDown)
-            this.pacman.setNextMove(Character.Move.Down);
+
+
+        if (this.input.activePointer.isDown) {
+            let pacman_position = this.pacman.currentPosition();
+            let pointer_position = this.input.activePointer.position;
+            let delta_x = pointer_position.x - pacman_position.x;
+            let delta_y = pointer_position.y - pacman_position.y;
+
+            if (Math.abs(delta_y) > Math.abs(delta_x))
+                this.pacman.setNextMove((delta_y > 0) ? Character.Move.Down : Character.Move.Up);
+            else
+                this.pacman.setNextMove((delta_x > 0) ? Character.Move.Right : Character.Move.Left);
+
+            //console.log("delta: " + delta_x + " " + delta_y);
+        } else {
+
+            if (this.cursors.left.isDown)
+                this.pacman.setNextMove(Character.Move.Left);
+            else if (this.cursors.right.isDown)
+                this.pacman.setNextMove(Character.Move.Right);
+            else if (this.cursors.up.isDown)
+                this.pacman.setNextMove(Character.Move.Up);
+            else if (this.cursors.down.isDown)
+                this.pacman.setNextMove(Character.Move.Down);
+
+        }
 
         // check collisions
         let pacman_position = this.pacman.currentPosition();
